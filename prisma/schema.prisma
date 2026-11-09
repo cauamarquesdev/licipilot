@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Empresa {
+  id          String   @id @default(cuid())
+  razaoSocial String
+  cnpj        String
+  endereco    String
+  telefone    String?
+  banco       String?
+  agencia     String?
+  conta       String?
+  pix         String?
+}
+
+model Edital {
+  id             String   @id @default(cuid())
+  numeroPregao   String
+  orgao          String
+  uf             String
+  municipio      String
+  objeto         String
+  dataPublicacao DateTime
+  dataAbertura   DateTime?
+  valor          Float?
+  linkOriginal   String
+  cnpj           String
+  ano            String
+  sequencial     String
+  
+  
+  status         String   @default("CAPTAÇÃO")
+
+  criadoEm       DateTime @default(now())
+  itens          Item[]
+}
+
+model Item {
+  id         String  @id @default(cuid())
+  descricao  String
+  quantidade Int
+  valor      Float?  // Valor Estimado do Governo
+  
+ 
+  valorCotado Float? 
+
+  editalId   String
+  edital     Edital  @relation(fields: [editalId], references: [id], onDelete: Cascade)
+}
